@@ -35,3 +35,16 @@ class MiniCPU:
             if self.zf == 0: self.pc = a
         elif op == 0x0A:
             self.running = False
+
+    def trace(self, op, a, b):
+        nomes = {
+            0x01: 'LOAD', 0x02: 'STORE', 0x03: 'ADD',
+            0x04: 'SUB',  0x05: 'MOV',   0x06: 'CMP',
+            0x07: 'JMP',  0x08: 'JZ',    0x09: 'JNZ',
+            0x0A: 'HALT'
+        }
+        nome = nomes.get(op, '???')
+        print(f"Ciclo {self.ciclo}: {nome:5s} {a},{b} | "
+              f"R0={self.reg[0]:3d} R1={self.reg[1]:3d} "
+              f"R2={self.reg[2]:3d} R3={self.reg[3]:3d} | "
+              f"PC={self.pc:3d} ZF={self.zf}")
