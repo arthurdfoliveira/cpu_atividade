@@ -48,3 +48,25 @@ class MiniCPU:
               f"R0={self.reg[0]:3d} R1={self.reg[1]:3d} "
               f"R2={self.reg[2]:3d} R3={self.reg[3]:3d} | "
               f"PC={self.pc:3d} ZF={self.zf}")
+        
+    def run(self):
+        while self.running:
+            op, a, b = self.fetch()
+            self.trace(op, a, b)
+            self.decode_execute(op, a, b)
+            self.ciclo += 1
+
+
+
+if __name__ == "__main__":
+    cpu = MiniCPU()
+    # Programa de exemplo: R0 = 5, R1 = 10, R2 = R0 + R1, HALT
+    programa = [
+        0x05, 0x00, 0x05,  # MOV R0, 5
+        0x05, 0x01, 0x0A,  # MOV R1, 10
+        0x03, 0x02, 0x00,  # ADD R2, R0
+        0x03, 0x02, 0x01,  # ADD R2, R1
+        0x0A, 0x00, 0x00   # HALT
+    ]
+    cpu.mem[:len(programa)] = programa
+    cpu.run()
