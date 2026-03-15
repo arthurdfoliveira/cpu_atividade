@@ -58,15 +58,23 @@ class MiniCPU:
 
 
 
-if __name__ == "__main__":
-    cpu = MiniCPU()
-    # Programa de exemplo: R0 = 5, R1 = 10, R2 = R0 + R1, HALT
-    programa = [
-        0x05, 0x00, 0x05,  # MOV R0, 5
-        0x05, 0x01, 0x0A,  # MOV R1, 10
-        0x03, 0x02, 0x00,  # ADD R2, R0
-        0x03, 0x02, 0x01,  # ADD R2, R1
-        0x0A, 0x00, 0x00   # HALT
-    ]
-    cpu.mem[:len(programa)] = programa
-    cpu.run()
+cpu = MiniCPU()
+
+dados = [12, 45, 7, 89, 23, 56, 3, 67]
+for i in range(len(dados)):
+    cpu.mem[0x10 + i] = dados[i]
+
+i = 0
+cpu.mem[i] = 0x01; cpu.mem[i+1] = 0; cpu.mem[i+2] = 0x13; i += 3
+cpu.mem[i] = 0x02; cpu.mem[i+1] = 0; cpu.mem[i+2] = 0x20; i += 3
+cpu.mem[i] = 0x0A; cpu.mem[i+1] = 0; cpu.mem[i+2] = 0x00; i += 3
+
+print("Iniciando a MiniCPU...\n")
+cpu.run()
+
+print("\n--- VALIDAÇÃO GRUPO 4 ---")
+print(f"Valor salvo no endereço 0x20: {cpu.mem[0x20]}")
+if cpu.mem[0x20] == 89:
+    print("Sucesso! O maior valor (89) foi gravado corretamente.")
+else:
+    print("Falha. O valor gravado está incorreto.")
