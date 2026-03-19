@@ -15,25 +15,25 @@ class MiniCPU:
         return op, a, b
 
     def decode_execute(self, op, a, b):
-        if op == 0x01:
+        if op == 0x01: # LOAD
             self.reg[a] = self.mem[b]
-        elif op == 0x02:
+        elif op == 0x02: # STORE
             self.mem[b] = self.reg[a]
-        elif op == 0x03:
+        elif op == 0x03: # ADD
             self.reg[a] = (self.reg[a] + self.reg[b]) & 0xFF
-        elif op == 0x04:
+        elif op == 0x04: # SUB
             self.reg[a] = (self.reg[a] - self.reg[b]) & 0xFF
-        elif op == 0x05:
+        elif op == 0x05: # MOV
             self.reg[a] = b
-        elif op == 0x06:
+        elif op == 0x06: # CMP
             self.zf = 1 if self.reg[a] == self.reg[b] else 0
-        elif op == 0x07:
+        elif op == 0x07: # JMP
             self.pc = a
-        elif op == 0x08:
+        elif op == 0x08: # JZ
             if self.zf == 1: self.pc = a
-        elif op == 0x09:
+        elif op == 0x09: # JNZ
             if self.zf == 0: self.pc = a
-        elif op == 0x0A:
+        elif op == 0x0A: # HALT
             self.running = False
 
     def trace(self, op, a, b):
@@ -50,22 +50,26 @@ class MiniCPU:
               f"PC={self.pc:3d} ZF={self.zf}")
         
     def run(self):
-        while self.running:
-            op, a, b = self.fetch()
-            self.trace(op, a, b)
-            self.decode_execute(op, a, b)
+        while self.running and self.pc < 256:
             self.ciclo += 1
+            op, a, b = self.fetch()
+            self.decode_execute(op, a, b)
+            self.trace(op, a, b)
 
+# --- INICIALIZAÇÃO GRUPO 4 ---
 cpu = MiniCPU()
 
+# Carregando os dados na memória (0x10 em diante)
 dados = [12, 45, 7, 89, 23, 56, 3, 67]
 for i in range(len(dados)):
     cpu.mem[0x10 + i] = dados[i]
 
+# --- PROGRAMA ASSEMBLY ---
+# Objetivo: Pegar o maior valor (89 que está no 0x13) e salvar no 0x20
 i = 0
-cpu.mem[i] = 0x01; cpu.mem[i+1] = 0; cpu.mem[i+2] = 0x13; i += 3
-cpu.mem[i] = 0x02; cpu.mem[i+1] = 0; cpu.mem[i+2] = 0x20; i += 3
-cpu.mem[i] = 0x0A; cpu.mem[i+1] = 0; cpu.mem[i+2] = 0x00; i += 3
+cpu.mem[i] = 0x01; cpu.mem[i+1] = 0; cpu.mem[i+2] = 0x13; i += 3 # LOAD R0, 0x13
+cpu.mem[i] = 0x02; cpu.mem[i+1] = 0; cpu.mem[i+2] = 0x20; i += 3 # STORE R0, 0x20
+cpu.mem[i] = 0x0A; cpu.mem[i+1] = 0; cpu.mem[i+2] = 0x00; i += 3 # HALT
 
 print("Iniciando a MiniCPU...\n")
 cpu.run()
