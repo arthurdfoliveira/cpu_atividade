@@ -35,3 +35,44 @@ class MiniCPU:
             if self.zf == 0: self.pc = a
         elif op == 0x0A:
             self.running = False
+
+    def trace(self, op, a, b):
+        nomes = {
+            0x01: 'LOAD', 0x02: 'STORE', 0x03: 'ADD',
+            0x04: 'SUB',  0x05: 'MOV',   0x06: 'CMP',
+            0x07: 'JMP',  0x08: 'JZ',    0x09: 'JNZ',
+            0x0A: 'HALT'
+        }
+        nome = nomes.get(op, '???')
+        print(f"Ciclo {self.ciclo}: {nome:5s} {a},{b} | "
+              f"R0={self.reg[0]:3d} R1={self.reg[1]:3d} "
+              f"R2={self.reg[2]:3d} R3={self.reg[3]:3d} | "
+              f"PC={self.pc:3d} ZF={self.zf}")
+        
+    def run(self):
+        while self.running:
+            op, a, b = self.fetch()
+            self.trace(op, a, b)
+            self.decode_execute(op, a, b)
+            self.ciclo += 1
+
+cpu = MiniCPU()
+
+dados = [12, 45, 7, 89, 23, 56, 3, 67]
+for i in range(len(dados)):
+    cpu.mem[0x10 + i] = dados[i]
+
+i = 0
+cpu.mem[i] = 0x01; cpu.mem[i+1] = 0; cpu.mem[i+2] = 0x13; i += 3
+cpu.mem[i] = 0x02; cpu.mem[i+1] = 0; cpu.mem[i+2] = 0x20; i += 3
+cpu.mem[i] = 0x0A; cpu.mem[i+1] = 0; cpu.mem[i+2] = 0x00; i += 3
+
+print("Iniciando a MiniCPU...\n")
+cpu.run()
+
+print("\n--- VALIDAÇÃO GRUPO 4 ---")
+print(f"Valor salvo no endereço 0x20: {cpu.mem[0x20]}")
+if cpu.mem[0x20] == 89:
+    print("Sucesso! O maior valor (89) foi gravado corretamente.")
+else:
+    print("Falha. O valor gravado está incorreto.")
