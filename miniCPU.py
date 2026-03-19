@@ -7,5 +7,31 @@ class MiniCPU:
         self.running = True
         self.ciclo = 0
 
-   
+    def fetch(self):
+        op = self.mem[self.pc]
+        a = self.mem[self.pc + 1]
+        b = self.mem[self.pc + 2]
+        self.pc += 3
+        return op, a, b
 
+    def decode_execute(self, op, a, b):
+        if op == 0x01:
+            self.reg[a] = self.mem[b]
+        elif op == 0x02:
+            self.mem[b] = self.reg[a]
+        elif op == 0x03:
+            self.reg[a] = (self.reg[a] + self.reg[b]) & 0xFF
+        elif op == 0x04:
+            self.reg[a] = (self.reg[a] - self.reg[b]) & 0xFF
+        elif op == 0x05:
+            self.reg[a] = b
+        elif op == 0x06:
+            self.zf = 1 if self.reg[a] == self.reg[b] else 0
+        elif op == 0x07:
+            self.pc = a
+        elif op == 0x08:
+            if self.zf == 1: self.pc = a
+        elif op == 0x09:
+            if self.zf == 0: self.pc = a
+        elif op == 0x0A:
+            self.running = False
