@@ -5,7 +5,7 @@
   ...
 0xF0 ──── área temporária (usada internamente)
 0x10 ──── array de entrada [8 valores]
-0x17 ────'
+0x17 ──── ultimo elemento do array
 0x20 ──── resultado (maior valor)
 ```
  

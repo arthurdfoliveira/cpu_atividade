@@ -56,20 +56,16 @@ class MiniCPU:
             self.decode_execute(op, a, b)
             self.trace(op, a, b)
 
-# --- INICIALIZAÇÃO GRUPO 4 ---
 cpu = MiniCPU()
 
-# Carregando os dados na memória (0x10 em diante)
 dados = [12, 45, 7, 89, 23, 56, 3, 67]
 for i in range(len(dados)):
     cpu.mem[0x10 + i] = dados[i]
 
-# --- PROGRAMA ASSEMBLY ---
-# Objetivo: Pegar o maior valor (89 que está no 0x13) e salvar no 0x20
 i = 0
-cpu.mem[i] = 0x01; cpu.mem[i+1] = 0; cpu.mem[i+2] = 0x13; i += 3 # LOAD R0, 0x13
-cpu.mem[i] = 0x02; cpu.mem[i+1] = 0; cpu.mem[i+2] = 0x20; i += 3 # STORE R0, 0x20
-cpu.mem[i] = 0x0A; cpu.mem[i+1] = 0; cpu.mem[i+2] = 0x00; i += 3 # HALT
+cpu.mem[i] = 0x01; cpu.mem[i+1] = 0; cpu.mem[i+2] = 0x13; i += 3 
+cpu.mem[i] = 0x02; cpu.mem[i+1] = 0; cpu.mem[i+2] = 0x20; i += 3 
+cpu.mem[i] = 0x0A; cpu.mem[i+1] = 0; cpu.mem[i+2] = 0x00; i += 3
 
 print("Iniciando a MiniCPU...\n")
 cpu.run()
